@@ -30,6 +30,9 @@ canvas.grid(column=1, row=1)
 title = Label(text="Timer", font=(FONT_NAME, 45, "bold"), fg=GREEN, bg=YELLOW)
 title.grid(column=1, row=0)
 
-
+start_button = Button(text="Start") # add command
+reset_button = Button(text="Reset") # add command
+start_button.grid(column=0, row=2)
+reset_button.grid(column=2, row=2)
 
 window.mainloop()
