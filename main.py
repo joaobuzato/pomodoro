@@ -7,13 +7,27 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 CHECK_MARK="✔"
-WORK_MIN = 1
-SHORT_BREAK_MIN = 1
-LONG_BREAK_MIN = 1
+WORK_MIN = 25
+SHORT_BREAK_MIN = 5
+LONG_BREAK_MIN = 20
 reps = 0
 is_clicked = False
+timer = None
 
-# ---------------------------- TIMER RESET ------------------------------- # 
+# ---------------------------- TIMER RESET ------------------------------- #
+
+
+def reset_timer():
+    global is_clicked
+    global reps
+
+    is_clicked = False
+    reps = 0
+    check_marks.config(text="")
+    title.config(text="Timer", fg=GREEN)
+    window.after_cancel(timer)
+    canvas.itemconfig(timer_text, text="00:00" )
+
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 def click_start():
@@ -43,14 +57,20 @@ def start_timer():
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 
 def count_down(count):
+
     min = math.floor(count / 60)
     sec = count % 60
     if sec <= 9:
         sec = f"0{sec}"
     canvas.itemconfig(timer_text, text=f"{min}:{sec}")
     if count > 0:
-        window.after(1000, count_down, count -1)
+        global timer
+        timer = window.after(1000, count_down, count -1)
     else:
+        marks = ""
+        for _ in range(math.floor(reps/2)):
+            marks += CHECK_MARK
+        check_marks.config(text=marks)
         start_timer()
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -67,11 +87,11 @@ title = Label(text="Timer", font=(FONT_NAME, 45, "bold"), fg=GREEN, bg=YELLOW)
 title.grid(column=1, row=0)
 
 
-start_button = Button(text="Start", command=click_start) # add command
-reset_button = Button(text="Reset") # add command
+start_button = Button(text="Start", command=click_start)
+reset_button = Button(text="Reset", command=reset_timer)
 start_button.grid(column=0, row=2)
 reset_button.grid(column=2, row=2)
 
-check_marks = Label(text=CHECK_MARK, fg=GREEN, bg=YELLOW, font=(FONT_NAME, 45, "bold"))
+check_marks = Label(fg=GREEN, bg=YELLOW, font=(FONT_NAME, 45, "bold"))
 check_marks.grid(column=1, row=3)
 window.mainloop()
