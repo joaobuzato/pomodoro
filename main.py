@@ -7,15 +7,38 @@ GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
 CHECK_MARK="✔"
-WORK_MIN = 25
-SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 20
+WORK_MIN = 1
+SHORT_BREAK_MIN = 1
+LONG_BREAK_MIN = 1
+reps = 0
+is_clicked = False
 
 # ---------------------------- TIMER RESET ------------------------------- # 
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
+def click_start():
+    global is_clicked
+    if not is_clicked:
+        is_clicked = True
+        start_timer()
+
+
 def start_timer():
-    count_down(WORK_MIN*60)
+    global reps
+    reps += 1
+    work_sec = WORK_MIN*60
+    short_break_sec = SHORT_BREAK_MIN*60
+    long_break_sec = LONG_BREAK_MIN*60
+
+    if reps % 8 == 0:
+        title.config(text="Long Break!", fg=RED)
+        count_down(long_break_sec)
+    elif reps % 2 == 0:
+        title.config(text="Short Break!", fg=PINK)
+        count_down(short_break_sec)
+    else:
+        title.config(text="Work!", fg=GREEN)
+        count_down(work_sec)
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 
@@ -27,6 +50,8 @@ def count_down(count):
     canvas.itemconfig(timer_text, text=f"{min}:{sec}")
     if count > 0:
         window.after(1000, count_down, count -1)
+    else:
+        start_timer()
 # ---------------------------- UI SETUP ------------------------------- #
 
 window = Tk()
@@ -41,7 +66,8 @@ canvas.grid(column=1, row=1)
 title = Label(text="Timer", font=(FONT_NAME, 45, "bold"), fg=GREEN, bg=YELLOW)
 title.grid(column=1, row=0)
 
-start_button = Button(text="Start", command=start_timer) # add command
+
+start_button = Button(text="Start", command=click_start) # add command
 reset_button = Button(text="Reset") # add command
 start_button.grid(column=0, row=2)
 reset_button.grid(column=2, row=2)
